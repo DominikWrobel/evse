@@ -1,0 +1,16 @@
+{
+    "config": {
+      "step": {
+        "user": {
+          "title": "Configure your EVSE",
+          "description": "Enter the IP, port, and name for the EVSE.",
+          "data": {
+            "ip_address": "IP Address",
+            "port": "Port",
+            "name": "Name"
+          }
+        }
+      }
+    }
+  }
+  
