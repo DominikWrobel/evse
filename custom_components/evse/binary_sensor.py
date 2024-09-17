@@ -57,3 +57,4 @@ class EVSEBinarySensor(BinarySensorEntity):
             self._state = None
             # Log the error in the Home Assistant log
             self.hass.components.logger.error(f"Error fetching data from {url}: {e}")
+
