@@ -13,7 +13,7 @@ _LOGGER = logging.getLogger(__name__)
 class EVSECurrentSlider(NumberEntity):
     """Representation of an EVSE current slider."""
 
-    def init(self, name, ip, port):
+    def __init__(self, name, ip, port):
         """Initialize the current slider."""
         self._name = name
         self._ip = ip
