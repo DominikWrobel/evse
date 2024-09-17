@@ -6,7 +6,7 @@
   "dependencies": "https://github.com/DominikWrobel/evse/issues",
   "codeowners": ["DominikWrobel"],
   "requirements": ["requests"],
-  "iot_class": "local_push",
+  "iot_class": "local_polling",
   "config_flow": true
 }
 
