@@ -1,6 +1,6 @@
 """Constants for the EVSE integration."""
 DOMAIN = "evse"
-PLATFORMS = ["sensor", "switch"]
+PLATFORMS = ["sensor", "switch", "number"]
 
 DEFAULT_NAME = "EVSE"
 DEFAULT_SCAN_INTERVAL = 10
