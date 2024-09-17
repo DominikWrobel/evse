@@ -1,7 +1,7 @@
 {
   "domain": "evse",
   "name": "EVSE",
-  "version": "0.1",
+  "version": "0.2",
   "documentation": "https://example.com",
   "dependencies": [],
   "codeowners": ["@yourusername"],
