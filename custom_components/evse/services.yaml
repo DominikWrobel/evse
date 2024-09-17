@@ -1,0 +1,14 @@
+evse_activate:
+  description: "Activate the EVSE"
+  fields: {}
+
+evse_deactivate:
+  description: "Deactivate the EVSE"
+  fields: {}
+
+evse_set_current:
+  description: "Set the EVSE current"
+  fields:
+    current:
+      description: "Current to set"
+      example: 16

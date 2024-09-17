@@ -1,0 +1,14 @@
+{
+    "title": "EVSE Custom Component",
+    "step": {
+      "user": {
+        "title": "Configure EVSE",
+        "data": {
+          "ip_address": "IP Address",
+          "port": "Port",
+          "name": "Name"
+        }
+      }
+    }
+  }
+  
