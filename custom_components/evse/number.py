@@ -8,12 +8,12 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from .const import DOMAIN
 
-_LOGGER = logging.getLogger(__name__)
+_LOGGER = logging.getLogger(name)
 
 class EVSECurrentSlider(NumberEntity):
     """Representation of an EVSE current slider."""
 
-    def __init__(self, name, ip, port):
+    def init(self, name, ip, port):
         """Initialize the current slider."""
         self._name = name
         self._ip = ip
@@ -75,8 +75,8 @@ class EVSECurrentSlider(NumberEntity):
                     async with session.get(url) as response:
                         if response.status == 200:
                             data = await response.json()
-                            actual_current = data["list"][0].get("actualCurrent")
-                            self._value = actual_current / 100 if actual_current is not None else None
+                            max_current = data["list"][0].get("maxCurrent")
+                            self._value = max_current / 100 if max_current is not None else None
                         else:
                             _LOGGER.error(f"Error fetching data from {url}: HTTP status {response.status}")
                             self._value = None
