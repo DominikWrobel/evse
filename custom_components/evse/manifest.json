@@ -1,12 +1,11 @@
 {
   "domain": "evse",
   "name": "EVSE",
-  "version": "0.2",
-  "documentation": "https://github.com/DominikWrobel/evse",
-  "dependencies": "https://github.com/DominikWrobel/evse/issues",
-  "codeowners": ["DominikWrobel"],
+  "version": "0.1",
+  "documentation": "https://example.com",
+  "dependencies": [],
+  "codeowners": ["@yourusername"],
   "requirements": ["requests"],
   "iot_class": "local_polling",
   "config_flow": true
 }
-
