@@ -67,7 +67,7 @@ class EVSESwitch(SwitchEntity):
         await self._send_command("setStatus?active=false")
 
     async def _send_command(self, command):
-        """Send command to EVSE."""
+        """Send command to EVSE and update state."""
         url = f"http://{self._ip}:{self._port}/{command}"
         try:
             session = async_get_clientsession(self.hass)
@@ -78,6 +78,10 @@ class EVSESwitch(SwitchEntity):
                         _LOGGER.info(f"EVSE command successful: {response_text}")
                         self._state = "true" in command
                         self._available = True
+                        self.async_write_ha_state()  # Immediately update the state
+                        
+                        # Schedule a delayed update to confirm the state
+                        self.hass.loop.call_later(10, lambda: asyncio.create_task(self._delayed_update()))
                     elif response_text.startswith("E0_"):
                         _LOGGER.error(f"Internal error: {response_text}")
                         self._available = False
@@ -97,6 +101,13 @@ class EVSESwitch(SwitchEntity):
         except Exception as e:
             self._available = False
             _LOGGER.error("Error sending command to %s: %s", url, str(e))
+        
+        self.async_write_ha_state()
+
+    async def _delayed_update(self):
+        """Perform a delayed update to confirm the switch state."""
+        await self.async_update()
+        self.async_write_ha_state()
 
     async def async_update(self):
         """Fetch new state data for the switch."""
@@ -107,13 +118,14 @@ class EVSESwitch(SwitchEntity):
                 async with session.get(url) as response:
                     data = await response.json()
                     evse_state = data["list"][0].get("evseState")
-                    self._state = evse_state == "true" or evse_state is True
+                    new_state = evse_state == "true" or evse_state is True
+                    if new_state != self._state:
+                        _LOGGER.info(f"Switch state mismatch. Updated from {self._state} to {new_state}")
+                        self._state = new_state
             self._available = True
         except asyncio.TimeoutError:
-            self._state = None
             self._available = False
             _LOGGER.error("Timeout error fetching data from %s", url)
         except Exception as e:
-            self._state = None
             self._available = False
             _LOGGER.error("Error fetching data from %s: %s", url, str(e))
