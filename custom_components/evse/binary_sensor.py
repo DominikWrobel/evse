@@ -9,9 +9,11 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     ip = config_entry.data['ip_address']
     port = config_entry.data['port']
     name = config_entry.data['name']
+    entry_id = config_entry.entry_id
+    unique_id = config_entry.unique_id
 
     sensors = [
-        EVSEBinarySensor(f"{name}_evse_state", ip, port, "evseState", "EVSE State")
+        EVSEBinarySensor(f"{name}_evse_state", ip, port, "evseState", "EVSE State", entry_id, unique_id)
     ]
 
     async_add_entities(sensors, True)
@@ -19,7 +21,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 class EVSEBinarySensor(BinarySensorEntity):
     """Representation of an EVSE binary sensor."""
 
-    def __init__(self, name, ip, port, attribute, friendly_name):
+    def __init__(self, name, ip, port, attribute, friendly_name, entry_id, unique_id):
         """Initialize the binary sensor."""
         self._name = name
         self._ip = ip
@@ -27,7 +29,8 @@ class EVSEBinarySensor(BinarySensorEntity):
         self._attribute = attribute
         self._friendly_name = friendly_name
         self._state = None
-        self._unique_id = f"{self._name}_{self._attribute}"  # Unique ID
+        self._attr_unique_id = f"{unique_id}_{self._attribute}"
+        self._entry_id = entry_id
 
     @property
     def name(self):
@@ -35,9 +38,11 @@ class EVSEBinarySensor(BinarySensorEntity):
         return self._name
 
     @property
-    def unique_id(self):
-        """Return the unique ID of the sensor."""
-        return self._unique_id
+    def device_info(self):
+        """Return device information."""
+        return {
+            "identifiers": {(DOMAIN, self._entry_id)},
+        }
 
     @property
     def is_on(self):
@@ -49,7 +54,7 @@ class EVSEBinarySensor(BinarySensorEntity):
         url = f"http://{self._ip}:{self._port}/getParameters"
         try:
             async with aiohttp.ClientSession() as session:
-                with async_timeout.timeout(10):
+                async with async_timeout.timeout(10):
                     async with session.get(url) as response:
                         data = await response.json()
                         self._state = data["list"][0].get(self._attribute)
@@ -57,4 +62,3 @@ class EVSEBinarySensor(BinarySensorEntity):
             self._state = None
             # Log the error in the Home Assistant log
             self.hass.components.logger.error(f"Error fetching data from {url}: {e}")
-
