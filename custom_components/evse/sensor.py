@@ -54,6 +54,8 @@ class EVSESensor(SensorEntity):
     @property
     def icon(self):
         """Return the icon of the sensor."""
+        if self._attribute == "vehicleState":
+            return self._get_vehicle_state_icon()
         return self._icon
 
     def _map_vehicle_state(self, value):
@@ -65,6 +67,18 @@ class EVSESensor(SensorEntity):
             5: "Error"
         }
         return mapper.get(value, "Unknown")
+
+    def _get_vehicle_state_icon(self):
+        """Return the icon based on the vehicle state."""
+        state = self._map_vehicle_state(self._state)
+        icon_mapper = {
+            "Ready": "mdi:ev-station",
+            "Connected": "mdi:car-connected",
+            "Charging": "mdi:car-electric",
+            "Error": "mdi:alert-circle",
+            "Unknown": "mdi:help-circle"
+        }
+        return icon_mapper.get(state, "mdi:help-circle")
 
     async def async_update(self):
         """Fetch new state data for the sensor."""
@@ -114,7 +128,7 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
         EVSESensor(f"{name}_actual_current", ip, port, "actualCurrent", "A", "Actual Current", entry_id, unique_id, "mdi:current-ac"),
         EVSESensor(f"{name}_actual_power", ip, port, "actualPower", "kW", "Actual Power", entry_id, unique_id, "mdi:lightning-bolt"),
         EVSESensor(f"{name}_duration", ip, port, "duration", "Minutes", "Duration", entry_id, unique_id, "mdi:clock-time-eight-outline"),
-        EVSESensor(f"{name}_vehicle_state", ip, port, "vehicleState", None, "Vehicle State", entry_id, unique_id, "mdi:car"),
+        EVSESensor(f"{name}_vehicle_state", ip, port, "vehicleState", None, "Vehicle State", entry_id, unique_id),
         EVSESensor(f"{name}_max_current", ip, port, "maxCurrent", "A", "Max Current", entry_id, unique_id, "mdi:current-ac"),
         EVSESensor(f"{name}_actual_current_ma", ip, port, "actualCurrentMA", "mA", "Actual Current (mA)", entry_id, unique_id, "mdi:current-ac"),
         EVSESensor(f"{name}_always_active", ip, port, "alwaysActive", None, "Always Active", entry_id, unique_id, "mdi:clock-time-eight-outline"),
@@ -135,4 +149,5 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
     # Add the sensors
     async_add_entities(sensors, True)
+
 
