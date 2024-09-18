@@ -75,11 +75,19 @@ class EVSESwitch(SwitchEntity):
                 async with session.get(url) as response:
                     response_text = await response.text()
                     if response_text.startswith("S0_"):
-                        _LOGGER.info(f"EVSE command successful: {response_text}")
-                        self._state = "true" in command
+                        if "activated" in response_text.lower():
+                            _LOGGER.info(f"EVSE successfully activated: {response_text}")
+                            self._state = True
+                        elif "deactivated" in response_text.lower():
+                            _LOGGER.info(f"EVSE successfully deactivated: {response_text}")
+                            self._state = False
+                        else:
+                            _LOGGER.info(f"EVSE command successful, but state unclear: {response_text}")
+                            self._state = "true" in command  # Fallback to the original logic
+                    
                         self._available = True
                         self.async_write_ha_state()  # Immediately update the state
-                        
+                    
                         # Schedule a delayed update to confirm the state
                         self.hass.loop.call_later(10, lambda: asyncio.create_task(self._delayed_update()))
                     elif response_text.startswith("E0_"):
@@ -101,7 +109,7 @@ class EVSESwitch(SwitchEntity):
         except Exception as e:
             self._available = False
             _LOGGER.error("Error sending command to %s: %s", url, str(e))
-        
+    
         self.async_write_ha_state()
 
     async def _delayed_update(self):
