@@ -14,7 +14,7 @@ _LOGGER = logging.getLogger(__name__)
 class EVSESensor(SensorEntity):
     """Representation of an EVSE sensor."""
 
-    def __init__(self, name, ip, port, attribute, unit, friendly_name, icon=None):
+    def __init__(self, name, ip, port, attribute, unit, friendly_name, entry_id, unique_id, icon=None):
         """Initialize the sensor."""
         self._name = name
         self._ip = ip
@@ -24,7 +24,15 @@ class EVSESensor(SensorEntity):
         self._friendly_name = friendly_name
         self._icon = icon
         self._state = None
-        self._attr_unique_id = f"{self._name}_{self._attribute}"
+        self._attr_unique_id = f"{unique_id}_{self._attribute}"
+        self._entry_id = entry_id
+
+    @property
+    def device_info(self):
+        """Return device information."""
+        return {
+            "identifiers": {(DOMAIN, self._entry_id)},
+        }
 
     @property
     def name(self):
@@ -86,6 +94,8 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
     ip = config_entry.data['ip_address']
     port = config_entry.data['port']
     name = config_entry.data['name']
+    entry_id = config_entry.entry_id
+    unique_id = config_entry.unique_id
 
     # Test connection before setting up entities
     try:
@@ -101,26 +111,26 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
     # Create sensor entities
     sensors = [
-        EVSESensor(f"{name}_actual_current", ip, port, "actualCurrent", "A", "Actual Current"),
-        EVSESensor(f"{name}_actual_power", ip, port, "actualPower", "kW", "Actual Power", "mdi:lightning-bolt"),
-        EVSESensor(f"{name}_duration", ip, port, "duration", "Minutes", "Duration"),
-        EVSESensor(f"{name}_vehicle_state", ip, port, "vehicleState", None, "Vehicle State"),
-        EVSESensor(f"{name}_max_current", ip, port, "maxCurrent", "A", "Max Current"),
-        EVSESensor(f"{name}_actual_current_ma", ip, port, "actualCurrentMA", "mA", "Actual Current (mA)"),
-        EVSESensor(f"{name}_always_active", ip, port, "alwaysActive", None, "Always Active"),
-        EVSESensor(f"{name}_last_action_user", ip, port, "lastActionUser", None, "Last Action User"),
-        EVSESensor(f"{name}_last_action_uid", ip, port, "lastActionUID", None, "Last Action UID"),
-        EVSESensor(f"{name}_energy", ip, port, "energy", "kWh", "Energy"),
-        EVSESensor(f"{name}_mileage", ip, port, "mileage", "km", "Mileage"),
-        EVSESensor(f"{name}_meter_reading", ip, port, "meterReading", "kWh", "Meter Reading"),
-        EVSESensor(f"{name}_current_p1", ip, port, "currentP1", "A", "Current Phase 1"),
-        EVSESensor(f"{name}_current_p2", ip, port, "currentP2", "A", "Current Phase 2"),
-        EVSESensor(f"{name}_current_p3", ip, port, "currentP3", "A", "Current Phase 3"),
-        EVSESensor(f"{name}_voltage_p1", ip, port, "voltageP1", "V", "Voltage Phase 1"),
-        EVSESensor(f"{name}_voltage_p2", ip, port, "voltageP2", "V", "Voltage Phase 2"),
-        EVSESensor(f"{name}_voltage_p3", ip, port, "voltageP3", "V", "Voltage Phase 3"),
-        EVSESensor(f"{name}_use_meter", ip, port, "useMeter", None, "Use Meter"),
-        EVSESensor(f"{name}_rfid_uid", ip, port, "RFIDUID", None, "RFID UID")
+        EVSESensor(f"{name}_actual_current", ip, port, "actualCurrent", "A", "Actual Current", entry_id, unique_id, "mdi:current-ac"),
+        EVSESensor(f"{name}_actual_power", ip, port, "actualPower", "kW", "Actual Power", entry_id, unique_id, "mdi:lightning-bolt"),
+        EVSESensor(f"{name}_duration", ip, port, "duration", "Minutes", "Duration", entry_id, unique_id, "mdi:clock-time-eight-outline"),
+        EVSESensor(f"{name}_vehicle_state", ip, port, "vehicleState", None, "Vehicle State", entry_id, unique_id, "mdi:car"),
+        EVSESensor(f"{name}_max_current", ip, port, "maxCurrent", "A", "Max Current", entry_id, unique_id, "mdi:current-ac"),
+        EVSESensor(f"{name}_actual_current_ma", ip, port, "actualCurrentMA", "mA", "Actual Current (mA)", entry_id, unique_id, "mdi:current-ac"),
+        EVSESensor(f"{name}_always_active", ip, port, "alwaysActive", None, "Always Active", entry_id, unique_id, "mdi:clock-time-eight-outline"),
+        EVSESensor(f"{name}_last_action_user", ip, port, "lastActionUser", None, "Last Action User", entry_id, unique_id),
+        EVSESensor(f"{name}_last_action_uid", ip, port, "lastActionUID", None, "Last Action UID", entry_id, unique_id),
+        EVSESensor(f"{name}_energy", ip, port, "energy", "kWh", "Energy", entry_id, unique_id, "mdi:lightning-bolt"),
+        EVSESensor(f"{name}_mileage", ip, port, "mileage", "km", "Mileage", entry_id, unique_id, "mdi:map-marker-distance"),
+        EVSESensor(f"{name}_meter_reading", ip, port, "meterReading", "kWh", "Meter Reading", entry_id, unique_id, "mdi:meter-electric"),
+        EVSESensor(f"{name}_current_p1", ip, port, "currentP1", "A", "Current Phase 1", entry_id, unique_id, "mdi:current-ac"),
+        EVSESensor(f"{name}_current_p2", ip, port, "currentP2", "A", "Current Phase 2", entry_id, unique_id, "mdi:current-ac"),
+        EVSESensor(f"{name}_current_p3", ip, port, "currentP3", "A", "Current Phase 3", entry_id, unique_id, "mdi:current-ac"),
+        EVSESensor(f"{name}_voltage_p1", ip, port, "voltageP1", "V", "Voltage Phase 1", entry_id, unique_id, "mdi:lightning-bolt"),
+        EVSESensor(f"{name}_voltage_p2", ip, port, "voltageP2", "V", "Voltage Phase 2", entry_id, unique_id, "mdi:lightning-bolt"),
+        EVSESensor(f"{name}_voltage_p3", ip, port, "voltageP3", "V", "Voltage Phase 3", entry_id, unique_id, "mdi:lightning-bolt"),
+        EVSESensor(f"{name}_use_meter", ip, port, "useMeter", None, "Use Meter", entry_id, unique_id),
+        EVSESensor(f"{name}_rfid_uid", ip, port, "RFIDUID", None, "RFID UID", entry_id, unique_id)
     ]
 
     # Add the sensors
