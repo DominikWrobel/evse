@@ -44,3 +44,4 @@ class EVSEOptionsFlowHandler(config_entries.OptionsFlow):
             vol.Optional('name', default=self.config_entry.data.get('name')): str
         })
         return self.async_show_form(step_id="init", data_schema=data_schema)
+
