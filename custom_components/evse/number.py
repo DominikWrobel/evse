@@ -124,6 +124,3 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
     # Add the slider
     async_add_entities([current_slider], True)
-
-    # Add the slider
-    async_add_entities([current_slider], True)
