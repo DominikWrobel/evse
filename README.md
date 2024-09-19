@@ -62,4 +62,4 @@ If you like my work you can support me via:
 <figure class="wp-block-image size-large"><a href="https://www.buymeacoffee.com/dominikjwrc"><img src="https://homeassistantwithoutaplan.files.wordpress.com/2023/07/coffe-3.png?w=182" alt="" class="wp-image-64"/></a></figure>
 
 # Special thanks to:
-@infromatica from Home Assistant forum for motivating me to make this integration and for the awsome icon.
+@kodacy for motivating me to make this integration and for the awsome icon.
