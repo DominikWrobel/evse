@@ -1,14 +1,25 @@
 {
-    "title": "EVSE Custom Component",
+  "title": "EVSE Custom Component",
+  "config": {
     "step": {
       "user": {
         "title": "Configure EVSE",
-        "data": {
-          "ip_address": "IP Address",
-          "port": "Port",
-          "name": "Name"
+        "description": "Please enter the configuration details for EVSE",
+        "fields": {
+          "ip_address": {
+            "name": "IP Address",
+            "description": "The IP address of the EVSE"
+          },
+          "port": {
+            "name": "Port",
+            "description": "The port for EVSE"
+          },
+          "name": {
+            "name": "Name",
+            "description": "The name of the EVSE"
+          }
         }
       }
     }
   }
-  
+}
