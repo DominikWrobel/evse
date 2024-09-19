@@ -21,6 +21,8 @@ class EVSECurrentSlider(NumberEntity):
         self._value = None
         self._attr_unique_id = f"{unique_id}_slider"
         self._entry_id = entry_id
+        self._attr_native_max_value = 32  # Default max value, will be updated
+        self._attr_native_unit_of_measurement = "A"
 
     @property
     def device_info(self):
@@ -45,18 +47,13 @@ class EVSECurrentSlider(NumberEntity):
         return 6
 
     @property
-    def native_max_value(self):
-        """Return the maximum value of the slider."""
-        return 32
-
-    @property
     def native_step(self):
         """Return the step value of the slider."""
         return 1
 
     async def async_set_native_value(self, value):
         """Set the current value of the slider."""
-        current_a = int(value)  # No need to convert to mA now
+        current_a = int(value)
         url = f"http://{self._ip}:{self._port}/setCurrent?current={current_a}"
         try:
             async with aiohttp.ClientSession() as session:
@@ -94,8 +91,13 @@ class EVSECurrentSlider(NumberEntity):
                     async with session.get(url) as response:
                         if response.status == 200:
                             data = await response.json()
-                            actual_current = data["list"][0].get("actualCurrent")
-                            self._value = actual_current if actual_current is not None else None
+                            if data["type"] == "parameters" and len(data["list"]) > 0:
+                                params = data["list"][0]
+                                self._value = params.get("actualCurrent")
+                                self._attr_native_max_value = params.get("maxCurrent", 32)
+                            else:
+                                _LOGGER.error(f"Unexpected data format from {url}")
+                                self._value = None
                         else:
                             _LOGGER.error(f"Error fetching data from {url}: HTTP status {response.status}")
                             self._value = None
@@ -119,6 +121,9 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry, asyn
 
     # Add the current slider
     current_slider = EVSECurrentSlider(f"{name}_set_current", ip, port, entry_id, unique_id)
+
+    # Add the slider
+    async_add_entities([current_slider], True)
 
     # Add the slider
     async_add_entities([current_slider], True)
