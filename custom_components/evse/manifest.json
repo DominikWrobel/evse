@@ -1,7 +1,7 @@
 {
   "domain": "evse",
   "name": "EVSE",
-  "version": "0.7",
+  "version": "0.9",
   "documentation": "https://github.com/DominikWrobel/evse",
   "issue_tracker": "https://github.com/DominikWrobel/evse/issues",
   "dependencies": [],
