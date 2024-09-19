@@ -44,8 +44,8 @@ custom_components
 │   ├── config_flow.py
 │   ├── const.py
 │   ├── strings.json
-|   ├── sensor.py
-|   ├── switch.py
+│   ├── sensor.py
+│   ├── switch.py
 │   ├── translations
 │   │   └── en.json
 ```
