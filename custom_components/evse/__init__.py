@@ -10,15 +10,14 @@ async def async_setup_entry(hass: HomeAssistant, config_entry: ConfigEntry):
     hass.data[DOMAIN][config_entry.entry_id] = config_entry.data
 
     # Create a device entry
-    device_registry = dr.async_get(hass)
-    device_registry.async_get_or_create(
-        config_entry_id=config_entry.entry_id,
-        identifiers={(DOMAIN, config_entry.unique_id)},
-        name=config_entry.data['name'],
-        manufacturer="EVSE",
-        model="EVSE Controller",
-        entry_type=DeviceEntryType.SERVICE
-    )
+#    device_registry = dr.async_get(hass)
+#    device_registry.async_get_or_create(
+#        config_entry_id=config_entry.entry_id,
+#        identifiers={(DOMAIN, config_entry.unique_id)},
+#        name=config_entry.data['name'],
+#        manufacturer="EVSE",
+#        model="EVSE Controller"
+#    )
 
     await hass.config_entries.async_forward_entry_setups(config_entry, PLATFORMS)
 
