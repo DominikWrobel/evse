@@ -1,3 +1,7 @@
+# Archive
+
+This is an archive repository, use the SmartWB repository (https://github.com/DominikWrobel/smartwb)
+
 # Readme
 
 ![icon](https://github.com/user-attachments/assets/00fcaadb-146a-4315-a86e-92e6b370ea0a)
